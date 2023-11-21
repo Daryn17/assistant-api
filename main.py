@@ -1,16 +1,17 @@
+from flask import Flask, request, jsonify
+from dotenv import load_dotenv, find_dotenv
+from openai import OpenAI
+from packaging import version
+from assistant.real_estate_agent import create_assistant
+from function.house import get_houses, get_house, add_house, update_house
+from function.agent import get_agents
+
 import json
 import os
 import time
-from flask import Flask, request, jsonify
-from dotenv import load_dotenv, find_dotenv
+import openai
 
 _ = load_dotenv(find_dotenv())
-import openai
-from openai import OpenAI
-import assistant.real_estate_agent as real_estate_agent
-
-# Check OpenAI version compatibility
-from packaging import version
 
 required_version = version.parse("1.1.1")
 current_version = version.parse(openai.__version__)
@@ -22,16 +23,12 @@ if current_version < required_version:
 
 print("OpenAI version is compatible.")
 
-# Create Flask app
 app = Flask(__name__)
 
-# Initialize OpenAI client
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Create or load assistant
-assistant_id = real_estate_agent.create_assistant(
-    client
-)  # this function comes from "functions.py"
+assistant_id = create_assistant(client)
 
 
 # Start conversation thread
@@ -43,7 +40,6 @@ def start_conversation():
     return jsonify({"thread_id": thread.id})
 
 
-# Generate response
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.json
@@ -78,8 +74,7 @@ def chat():
             # Handle the function call
             for tool_call in run_status.required_action.submit_tool_outputs.tool_calls:
                 if tool_call.function.name == "get_houses":
-                    # Process lead get_houses
-                    output = real_estate_agent.get_houses()
+                    output = get_houses()
                     client.beta.threads.runs.submit_tool_outputs(
                         thread_id=thread_id,
                         run_id=run.id,
@@ -87,10 +82,9 @@ def chat():
                             {"tool_call_id": tool_call.id, "output": json.dumps(output)}
                         ],
                     )
-                if tool_call.function.name == "get_houses_by_id":
-                    # Process lead get_houses_by_id
+                if tool_call.function.name == "get_house":
                     arguments = json.loads(tool_call.function.arguments)
-                    output = real_estate_agent.get_houses_by_id(arguments["id"])
+                    output = get_house(arguments["id"])
                     client.beta.threads.runs.submit_tool_outputs(
                         thread_id=thread_id,
                         run_id=run.id,
@@ -99,9 +93,8 @@ def chat():
                         ],
                     )
                 if tool_call.function.name == "add_house":
-                    # Process lead add_house
                     arguments = json.loads(tool_call.function.arguments)
-                    output = real_estate_agent.add_house(
+                    output = add_house(
                         {
                             "name": arguments["name"],
                             "house_number": arguments["house_number"],
@@ -125,7 +118,6 @@ def chat():
                         ],
                     )
                 if tool_call.function.name == "update_house":
-                    # Process lead update_house
                     arguments = json.loads(tool_call.function.arguments)
                     data = {}
                     if "name" in arguments:
@@ -153,10 +145,20 @@ def chat():
                     if "status" in arguments:
                         data["status"] = arguments["status"]
 
-                    output = real_estate_agent.update_house(
+                    output = update_house(
                         arguments["id"],
                         data,
                     )
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "get_agents":
+                    output = get_agents()
                     client.beta.threads.runs.submit_tool_outputs(
                         thread_id=thread_id,
                         run_id=run.id,

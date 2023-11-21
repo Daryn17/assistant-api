@@ -1,84 +1,6 @@
 import json
-import requests
 import os
-from openai import OpenAI
 from prompts.real_estate_agent import real_estate_agent_instructions
-
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-DATA_BASE_API = os.environ["DATA_BASE_API"]
-
-# Init OpenAI Client
-client = OpenAI(api_key=OPENAI_API_KEY)
-
-
-def get_houses():
-    # The endpoint URL
-    url = f"{DATA_BASE_API}/houses"
-    try:
-        # Perform the GET request
-        response = requests.get(url)
-        # Check if the request was successful
-        if response.status_code == 200:
-            # The request was successful, return the response data as a JSON object
-            return response.json()
-        # The request failed, return the status code
-        return f"Failed to retrieve data, status code: {response.status_code}"
-    except requests.RequestException as e:
-        # Handle any requests exceptions that may occur
-        return str(e)
-
-
-def get_houses_by_id(id):
-    # The endpoint URL
-    url = f"{DATA_BASE_API}/house/{id}"
-    try:
-        # Perform the GET request
-        response = requests.get(url)
-        # Check if the request was successful
-        if response.status_code == 200:
-            # The request was successful, return the response data as a JSON object
-            return response.json()
-        else:
-            # The request failed, return the status code
-            return f"Failed to retrieve data, status code: {response.status_code}"
-    except requests.RequestException as e:
-        # Handle any requests exceptions that may occur
-        return str(e)
-
-
-def add_house(data):
-    # The endpoint URL
-    url = f"{DATA_BASE_API}/house"
-    try:
-        response = requests.post(url, json=data)
-        # Check if the request was successful
-        if response.status_code == 201:
-            # The request was successful, return the response data as a JSON object
-            return response.json()
-        else:
-            # The request failed, return the status code
-            return f"Failed to retrieve data, status code: {response.status_code}"
-    except requests.RequestException as e:
-        # Handle any requests exceptions that may occur
-        return str(e)
-
-
-def update_house(id, data):
-    # The endpoint URL
-    url = f"{DATA_BASE_API}/house/{id}"
-    try:
-        # Send the PUT request
-        response = requests.put(url, json=data)
-        # If the response code is 200-299, it was successful
-        response.raise_for_status()
-        # Return the status code and the response content
-        return response.status_code, response.json()
-    except requests.HTTPError as http_err:
-        # Return the status code and HTTP error message
-        return response.status_code, str(http_err)
-    except Exception as err:
-        # For other exceptions, return None and the error message
-        return None, str(err)
 
 
 # Create or load assistant
@@ -95,13 +17,12 @@ def create_assistant(client):
         # If no assistant.json is present, create a new assistant using the below specifications
         assistant = client.beta.assistants.create(
             name="real_estate_agent_assistant",
-            # Getting assistant prompt from "prompts.py" file, edit on left panel if you want to change the prompt
             instructions=real_estate_agent_instructions,
             model="gpt-4-1106-preview",
             tools=[
                 {"type": "code_interpreter"},
                 {
-                    "type": "function",  # This adds the lead capture as a tool
+                    "type": "function",
                     "function": {
                         "name": "get_houses",
                         "description": "It is the function to obtain the information of all the houses that are stored in the database, like id, direction, name, price, state and status. But no show the id.",
@@ -115,7 +36,7 @@ def create_assistant(client):
                 {
                     "type": "function",
                     "function": {
-                        "name": "get_houses_by_id",
+                        "name": "get_house",
                         "description": "It is the function to obtain the information of a specific house with the id, which is stored in the database.",
                         "parameters": {
                             "type": "object",
@@ -265,6 +186,18 @@ def create_assistant(client):
                                 },
                             },
                             "required": ["id"],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_agents",
+                        "description": "It is the function to obtain the information of all the agents that are stored in the database, like id, name, email. But no show the id.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
                         },
                     },
                 },
