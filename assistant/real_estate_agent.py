@@ -24,6 +24,18 @@ def create_assistant(client):
                 {
                     "type": "function",
                     "function": {
+                        "name": "get_current_date_and_time",
+                        "description": "This function is designed to return the current date and time.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
                         "name": "get_houses",
                         "description": "It is the function to obtain the information of all the houses that are stored in the database, like id, direction, name, price, state and status. But no show the id.",
                         "parameters": {
@@ -239,7 +251,7 @@ def create_assistant(client):
                                     "description": "Is the phone of the new agent. Example +50686733343",
                                 },
                             },
-                            "required": ["name", "email" "phone"],
+                            "required": ["name", "email", "phone"],
                         },
                     },
                 },
@@ -269,6 +281,133 @@ def create_assistant(client):
                                 },
                             },
                             "required": ["id"],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_appointments",
+                        "description": "It is the function to obtain the information of all the appointments that are stored in the database, like id, client_name, client_email, appointment_time. But no show the id.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_appointment",
+                        "description": "It is the function to obtain the information of a specific appointment with the id, which is stored in the database.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Is the id identification of the appointment in the database.",
+                                },
+                            },
+                            "required": ["id"],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "add_appointment",
+                        "description": "It is the function to add a new appointment to the database, but it needs name and other data.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "appointment_time": {
+                                    "type": "string",
+                                    "description": "Is the appointment time of the new appointment. Example 21/11/2023 13:45:30",
+                                },
+                                "client_name": {
+                                    "type": "string",
+                                    "description": "Is the client name of the new appointment, Ask the client her name. Example Juan Miguel",
+                                },
+                                "client_email": {
+                                    "type": "string",
+                                    "description": "Is the client email of the new appointment, Ask the client her email. Example juanarce@gmail.com",
+                                },
+                                "client_phone": {
+                                    "type": "string",
+                                    "description": "Is the client phone of the new appointment, Ask the client her phone. Example +50686722343",
+                                },
+                                "notes": {
+                                    "type": "string",
+                                    "description": "Is the notes of the new appointment. Example I need to see the house quickly",
+                                },
+                                "house_id": {
+                                    "type": "string",
+                                    "description": "It is the identification of the house that the client will come to see at the new appointment. Example 17",
+                                },
+                                "agent_id": {
+                                    "type": "string",
+                                    "description": "It is the identification of the agent who will show the house to the client at the new appointment. Example 7",
+                                },
+                            },
+                            "required": [
+                                "appointment_time",
+                                "client_name",
+                                "client_email",
+                                "client_phone",
+                                "notes",
+                                "agent_id",
+                                "house_id",
+                            ],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "update_appointment",
+                        "description": "It is the function to update a appointment in the database, but it needs the new data.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "appointment_time": {
+                                    "type": "string",
+                                    "description": "Is the new appointment time of the appointment. Example 21/11/2023 13:45:30",
+                                },
+                                "client_name": {
+                                    "type": "string",
+                                    "description": "Is the new client name of the appointment. Example Juan Miguel",
+                                },
+                                "client_email": {
+                                    "type": "string",
+                                    "description": "Is the new client email of the appointment. Example juanarce@gmail.com",
+                                },
+                                "client_phone": {
+                                    "type": "string",
+                                    "description": "Is the new client phone of the appointment. Example +50686722343",
+                                },
+                                "notes": {
+                                    "type": "string",
+                                    "description": "Is the new notes of the appointment. Example I need to see the house quickly",
+                                },
+                                "house_id": {
+                                    "type": "string",
+                                    "description": "It is the new identification of the house that the client will come to see at the appointment. Example 17",
+                                },
+                                "agent_id": {
+                                    "type": "string",
+                                    "description": "It is the new identification of the agent who will show the house to the client at the appointment. Example 7",
+                                },
+                            },
+                            "required": [
+                                "appointment_time",
+                                "client_name",
+                                "client_email",
+                                "client_phone",
+                                "notes",
+                                "agent_id",
+                                "house_id",
+                            ],
                         },
                     },
                 },

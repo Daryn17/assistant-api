@@ -5,6 +5,13 @@ from packaging import version
 from assistant.real_estate_agent import create_assistant
 from function.house import get_houses, get_house, add_house, update_house
 from function.agent import get_agents, get_agent, add_agent, update_agent
+from function.appointment import (
+    get_appointments,
+    get_appointment,
+    add_appointment,
+    update_appointment,
+)
+from function.utils import get_current_date_and_time
 
 import json
 import os
@@ -73,6 +80,15 @@ def chat():
         if run_status.status == "requires_action":
             # Handle the function call
             for tool_call in run_status.required_action.submit_tool_outputs.tool_calls:
+                if tool_call.function.name == "get_current_date_and_time":
+                    output = get_current_date_and_time()
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
                 if tool_call.function.name == "get_houses":
                     output = get_houses()
                     client.beta.threads.runs.submit_tool_outputs(
@@ -206,6 +222,78 @@ def chat():
                         data["phone"] = arguments["phone"]
 
                     output = update_agent(
+                        arguments["id"],
+                        data,
+                    )
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "get_appointments":
+                    output = get_appointments()
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "get_appointment":
+                    arguments = json.loads(tool_call.function.arguments)
+                    output = get_appointment(arguments["id"])
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "add_appointment":
+                    arguments = json.loads(tool_call.function.arguments)
+                    output = add_appointment(
+                        {
+                            "agent_id": arguments["agent_id"],
+                            "appointment_time": arguments["appointment_time"],
+                            "client_name": arguments["client_name"],
+                            "client_email": arguments["client_email"],
+                            "client_phone": arguments["client_phone"],
+                            "house_id": arguments["house_id"],
+                            "notes": arguments["notes"],
+                        }
+                    )
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "update_appointment":
+                    arguments = json.loads(tool_call.function.arguments)
+                    data = {}
+                    if "agent_id" in arguments:
+                        data["agent_id"] = arguments["agent_id"]
+                    if "appointment_time" in arguments:
+                        data["appointment_time"] = arguments["appointment_time"]
+                    if "client_name" in arguments:
+                        data["client_name"] = arguments["client_name"]
+                    if "client_email" in arguments:
+                        data["client_email"] = arguments["client_email"]
+                    if "client_phone" in arguments:
+                        data["client_phone"] = arguments["client_phone"]
+                    if "house_id" in arguments:
+                        data["house_id"] = arguments["house_id"]
+                    if "notes" in arguments:
+                        data["notes"] = arguments["notes"]
+
+                    output = update_appointment(
                         arguments["id"],
                         data,
                     )
