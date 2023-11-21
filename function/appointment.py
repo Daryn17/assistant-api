@@ -8,8 +8,8 @@ _ = load_dotenv(find_dotenv())
 DATA_BASE_API = os.environ["DATA_BASE_API"]
 
 
-def get_agents():
-    url = f"{DATA_BASE_API}/agents"
+def get_appointments():
+    url = f"{DATA_BASE_API}/appointments"
     try:
         response = requests.get(url)
         if response.status_code == 200:
@@ -19,8 +19,8 @@ def get_agents():
         return str(e)
 
 
-def get_agent(id):
-    url = f"{DATA_BASE_API}/agent/{id}"
+def get_appointment(id):
+    url = f"{DATA_BASE_API}/appointment/{id}"
     try:
         response = requests.get(url)
         if response.status_code == 200:
@@ -30,8 +30,8 @@ def get_agent(id):
         return str(e)
 
 
-def add_agent(data):
-    url = f"{DATA_BASE_API}/agent"
+def add_appointment(data):
+    url = f"{DATA_BASE_API}/appointment"
     try:
         response = requests.post(url, json=data)
         if response.status_code == 201:
@@ -41,8 +41,8 @@ def add_agent(data):
         return str(e)
 
 
-def update_agent(id, data):
-    url = f"{DATA_BASE_API}/agent/{id}"
+def update_appointment(id, data):
+    url = f"{DATA_BASE_API}/appointment/{id}"
     try:
         response = requests.put(url, json=data)
         response.raise_for_status()

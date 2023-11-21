@@ -4,7 +4,7 @@ from openai import OpenAI
 from packaging import version
 from assistant.real_estate_agent import create_assistant
 from function.house import get_houses, get_house, add_house, update_house
-from function.agent import get_agents
+from function.agent import get_agents, get_agent, add_agent, update_agent
 
 import json
 import os
@@ -159,6 +159,56 @@ def chat():
 
                 if tool_call.function.name == "get_agents":
                     output = get_agents()
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "get_agent":
+                    arguments = json.loads(tool_call.function.arguments)
+                    output = get_agent(arguments["id"])
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "add_agent":
+                    arguments = json.loads(tool_call.function.arguments)
+                    output = add_agent(
+                        {
+                            "name": arguments["name"],
+                            "email": arguments["email"],
+                            "phone": arguments["phone"],
+                        }
+                    )
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+
+                if tool_call.function.name == "update_agent":
+                    arguments = json.loads(tool_call.function.arguments)
+                    data = {}
+                    if "name" in arguments:
+                        data["name"] = arguments["name"]
+                    if "email" in arguments:
+                        data["email"] = arguments["email"]
+                    if "phone" in arguments:
+                        data["phone"] = arguments["phone"]
+
+                    output = update_agent(
+                        arguments["id"],
+                        data,
+                    )
                     client.beta.threads.runs.submit_tool_outputs(
                         thread_id=thread_id,
                         run_id=run.id,

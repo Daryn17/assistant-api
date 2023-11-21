@@ -1,6 +1,6 @@
 import json
 import os
-from prompts.real_estate_agent import real_estate_agent_instructions
+from prompt.real_estate_agent import real_estate_agent_instructions
 
 
 # Create or load assistant
@@ -138,51 +138,51 @@ def create_assistant(client):
                                 },
                                 "name": {
                                     "type": "string",
-                                    "description": "Is the new name of the new house. Example Beach house",
+                                    "description": "Is the new name of the house. Example Beach house",
                                 },
                                 "house_number": {
                                     "type": "string",
-                                    "description": "Is the new house number of the new house. Example B102",
+                                    "description": "Is the new house number of the house. Example B102",
                                 },
                                 "floor": {
                                     "type": "integer",
-                                    "description": "It is the new number of floors in the new house. Example 2",
+                                    "description": "It is the new number of floors in the house. Example 2",
                                 },
                                 "room": {
                                     "type": "integer",
-                                    "description": "It is the new number of rooms in the new house. Example 4",
+                                    "description": "It is the new number of rooms in the house. Example 4",
                                 },
                                 "bathroom": {
                                     "type": "integer",
-                                    "description": "It is the new number of bathrooms in the new house. Example 2",
+                                    "description": "It is the new number of bathrooms in the house. Example 2",
                                 },
                                 "kitchen": {
                                     "type": "integer",
-                                    "description": "It is the new number of kitchen in the new house. Example 1",
+                                    "description": "It is the new number of kitchen in the house. Example 1",
                                 },
                                 "garage": {
                                     "type": "integer",
-                                    "description": "It is the new number of garages in the new house. Example 2",
+                                    "description": "It is the new number of garages in the house. Example 2",
                                 },
                                 "country": {
                                     "type": "string",
-                                    "description": "It is the new country where the new house is located. Example Costa Rica",
+                                    "description": "It is the new country where the house is located. Example Costa Rica",
                                 },
                                 "direction": {
                                     "type": "string",
-                                    "description": "It is the new direction where the new house is located. Example Playa Hermosa, Hermosa Palms Casa #10, Jacó 61101",
+                                    "description": "It is the new direction where the house is located. Example Playa Hermosa, Hermosa Palms Casa #10, Jacó 61101",
                                 },
                                 "state": {
                                     "type": "string",
-                                    "description": "It is the new state where the new house is located. Example Guanacaste",
+                                    "description": "It is the new state where the house is located. Example Guanacaste",
                                 },
                                 "price": {
                                     "type": "integer",
-                                    "description": "Is the new price of the new house. Example 230000",
+                                    "description": "Is the new price of the house. Example 230000",
                                 },
                                 "status": {
                                     "type": "string",
-                                    "description": "Is the new status of the new house. But it can only be For Sale, Pending, Under Contract, Contingent Sale, Withdrawn, Expired, Pre-sale, Sold. Example For Sale",
+                                    "description": "Is the new status of the house. But it can only be For Sale, Pending, Under Contract, Contingent Sale, Withdrawn, Expired, Pre-sale, Sold. Example For Sale",
                                 },
                             },
                             "required": ["id"],
@@ -198,6 +198,77 @@ def create_assistant(client):
                             "type": "object",
                             "properties": {},
                             "required": [],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_agent",
+                        "description": "It is the function to obtain the information of a specific agent with the id, which is stored in the database.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Is the id identification of the agent in the database.",
+                                },
+                            },
+                            "required": ["id"],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "add_agent",
+                        "description": "It is the function to add a new agent to the database, but it needs name and other data.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "Is the name of the new agent. Example Daryn Soto",
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "Is the email of the new agent. Example Beach darynsoto@gmail.com",
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "Is the phone of the new agent. Example +50686733343",
+                                },
+                            },
+                            "required": ["name", "email" "phone"],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "update_agent",
+                        "description": "It is the function to update a agent in the database, but it needs the new data.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Is the id identification of the agent to update.",
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "Is the new name of the agent. Example Gerardo Soto",
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "Is the new email of the agent. Example darynsoto@hotmail.com",
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "Is the new phone of the agent. Example +50686733342",
+                                },
+                            },
+                            "required": ["id"],
                         },
                     },
                 },
