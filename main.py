@@ -11,7 +11,7 @@ from function.appointment import (
     add_appointment,
     update_appointment,
 )
-from function.utils import get_current_date_and_time
+from function.utils import get_current_date_and_time, send_email
 
 import json
 import os
@@ -82,6 +82,22 @@ def chat():
             for tool_call in run_status.required_action.submit_tool_outputs.tool_calls:
                 if tool_call.function.name == "get_current_date_and_time":
                     output = get_current_date_and_time()
+                    client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=[
+                            {"tool_call_id": tool_call.id, "output": json.dumps(output)}
+                        ],
+                    )
+                if tool_call.function.name == "send_email":
+                    arguments = json.loads(tool_call.function.arguments)
+                    context = {
+                        "body": arguments["body"],
+                        "subject": arguments["subject"],
+                    }
+                    output = send_email(
+                        arguments["client_email"], arguments["agent_email"], context
+                    )
                     client.beta.threads.runs.submit_tool_outputs(
                         thread_id=thread_id,
                         run_id=run.id,

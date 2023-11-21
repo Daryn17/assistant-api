@@ -26,24 +26,18 @@ def send_email(client_email, agent_email, context):
     msg["From"] = APP_EMAIL
     msg["To"] = f"{client_email}, {agent_email}"
 
-    # Connect to the SMTP server
-    with smtplib.SMTP("smtp.gmail.com", 465) as server:
-        server.starttls()  # Upgrade the connection to secure
-        server.login(APP_EMAIL, APP_EMAIL_PASSWORD)
-        server.send_message(msg)
-        server.quit()
-
-
-# Usage
-client_email = "your-email@example.com"
-
-
-agent_email = "recipient@example.com"
-
-context = {
-    "body": "This is a test email from my Python function.",
-    "subject": "Test Subject",
-}
-
-# Call the function
-send_email(client_email, agent_email, context)
+    try:
+        # Connect to the SMTP server
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()  # Upgrade the connection to secure
+            server.login(APP_EMAIL, APP_EMAIL_PASSWORD)
+            server.send_message(msg)
+        return "Email sent successfully."
+    except smtplib.SMTPAuthenticationError:
+        return "Authentication error. Could not log in to the server."
+    except smtplib.SMTPServerDisconnected:
+        return "Server unexpectedly disconnected."
+    except smtplib.SMTPException as e:
+        return f"SMTP error occurred: {str(e)}"
+    except Exception as e:
+        return f"An error occurred: {str(e)}"

@@ -36,6 +36,40 @@ def create_assistant(client):
                 {
                     "type": "function",
                     "function": {
+                        "name": "send_email",
+                        "description": "This function is designed to send an email when the customer or agent adds or updates an appointment.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "client_email": {
+                                    "type": "string",
+                                    "description": "It is the email of the client at the appointment.",
+                                },
+                                "agent_email": {
+                                    "type": "string",
+                                    "description": "It is the email of the agent at the appointment.",
+                                },
+                                "subject": {
+                                    "type": "string",
+                                    "description": "Is the subject of the email about appointment, write something appropriate and polite.",
+                                },
+                                "body": {
+                                    "type": "string",
+                                    "description": "Is the body of the email about appointment, mention in the body the exact date and time of the appointment, write something appropriate and polite.",
+                                },
+                            },
+                            "required": [
+                                "client_email",
+                                "agent_email",
+                                "subject",
+                                "body",
+                            ],
+                        },
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
                         "name": "get_houses",
                         "description": "It is the function to obtain the information of all the houses that are stored in the database, like id, direction, name, price, state and status. But no show the id.",
                         "parameters": {
@@ -323,7 +357,7 @@ def create_assistant(client):
                             "properties": {
                                 "appointment_time": {
                                     "type": "string",
-                                    "description": "Is the appointment time of the new appointment. Example 21/11/2023 13:45:30",
+                                    "description": "Is the appointment time of the new appointment. Example 21/11/2023 13:45:30 in timestamp format",
                                 },
                                 "client_name": {
                                     "type": "string",
@@ -372,7 +406,7 @@ def create_assistant(client):
                             "properties": {
                                 "appointment_time": {
                                     "type": "string",
-                                    "description": "Is the new appointment time of the appointment. Example 21/11/2023 13:45:30",
+                                    "description": "Is the new appointment time of the appointment. Example 21/11/2023 13:45:30 in timestamp format",
                                 },
                                 "client_name": {
                                     "type": "string",
