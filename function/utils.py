@@ -7,19 +7,24 @@ import os
 
 _ = load_dotenv(find_dotenv())
 
-APP_EMAIL_PASSWORD = os.environ["APP_EMAIL_PASSWORD"]
 APP_EMAIL = os.environ["APP_EMAIL"]
+APP_EMAIL_PASSWORD = os.environ["APP_EMAIL_PASSWORD"]
+SMTP_HOST = os.environ["SMTP_HOST"]
+SMTP_PORT = os.environ["SMTP_PORT"]
 
 
-def get_current_date_and_time():
+def get_current_date_and_time() -> str:
+    """get_current_date_and_time"""
+
     now = datetime.now()
     current_date = now.strftime("%Y-%m-%d")
     current_time = now.strftime("%H:%M")
     return f"The current date is {current_date}, and the time is {current_time}."
 
 
-def send_email(client_email, agent_email, context):
-    # Create the email message
+def send_email(client_email, agent_email, context) -> str:
+    """send_email"""
+
     msg = EmailMessage()
     msg.set_content(context["body"])
     msg["Subject"] = context["subject"]
@@ -28,7 +33,7 @@ def send_email(client_email, agent_email, context):
 
     try:
         # Connect to the SMTP server
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
             server.starttls()  # Upgrade the connection to secure
             server.login(APP_EMAIL, APP_EMAIL_PASSWORD)
             server.send_message(msg)
