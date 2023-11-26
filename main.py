@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from dotenv import load_dotenv, find_dotenv
 from openai import OpenAI
 from packaging import version
@@ -31,6 +32,9 @@ if current_version < required_version:
 print("OpenAI version is compatible.")
 
 app = Flask(__name__)
+
+# Aquí especificamos el origen con el puerto que usa tu cliente local.
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 

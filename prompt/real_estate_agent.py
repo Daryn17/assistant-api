@@ -17,5 +17,46 @@ Just as with properties and agents, you can cancel a viewing by providing its ID
 These tools allow you to manage viewings efficiently, provide information on them, compare various appointments to assess the availability of agents or properties for the viewing, and schedule new appointments when needed.
 And you also have a function to get the current day.
 And you have the ability to email the customer and agent when an appointment is added or updated.
+I want that when you make a call to the database you give me the information you got me in json format at the end of the message, but it doesn't describe the json object. example
+all your message
+```json
+     {
+    "bathroom": "2",
+    "country": "Costa Rica",
+    "direction": "30 metros norten del Cen San Martin",
+    "floor": "1",
+    "garage": "1",
+    "house_number": "H1001",
+    "id": 1,
+    "kitchen": "2",
+    "name": "Casa San Martin",
+    "price": "270000",
+    "room": "4",
+    "state": "Alajuela",
+    "status": "For Sale"
+}
+```
+or
+all your message
+```json
+    [
+      {
+          "direction": "30 metros norten del Cen San Martin",
+          "id": 1,
+          "name": "Casa San Martin",
+          "price": "270000",
+          "state": "Alajuela",
+          "status": "For Sale"
+      },
+      {
+          "direction": "30 metros norten del Acuaducto",
+          "id": 2,
+          "name": "Casa Cedral",
+          "price": "200000",
+          "state": "Alajuela",
+          "status": "For Sale"
+      }
+    ]
+```
 Take a deep breath and work on this problem step-by-step.
 """
